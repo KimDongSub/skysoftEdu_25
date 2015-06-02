@@ -10,6 +10,7 @@ class MyVector {
 			throw new IllegalArgumentException("유효하지 않은 값입니다. :" + capacity);
 		this.capacity = capacity;
 		data = new Object[capacity];
+
 	}
 
 	public MyVector() {
@@ -140,7 +141,7 @@ class MyVector {
 	 * 5. Comment    : 데이터 용량(capacity)에 맞춰 크기(size) 범위 안에서 데이터의 순서(index)를 조정
 	 *                               하여 데이터를 추가 한다.
 	 * </PRE>
-	 * 
+	 *
 	 * @return void
 	 * @param index
 	 *            : 데이터의 순서
@@ -149,10 +150,25 @@ class MyVector {
 	 */
 	public void add(int index, Object obj) {
 		// 1. index의 값이 size보다크면, ArrayIndexOutOfBoundsException
+		if(index > size){
+			throw new IllegalArgumentException("ArrayIndexOutOfBoundsException"+index);
+		}
+
 		// 2. ensureCapacity()를 호출해서 새로운 객체가 저장될 공간을 확보한다.
+		ensureCapacity(size+1);
+
+
 		// 3. 객체배열에서 index위치의 객체와 이후의 객체들을 한칸씩 옆으로 이동한다. (System.arraycopy()사용)
+
+
+		System.arraycopy(data, index, data, index+1, size-index);
+
+
 		// 4. 객체배열의 index위치에 새로운 객체(obj)를 저장한다.
+		data[index] = obj;
+
 		// 5. size의 값을 1 증가시킨다.
+		size++;
 	}
 
 	/**
@@ -164,19 +180,35 @@ class MyVector {
 	 * 5. Comment    : 데이터 용량(capacity)에 맞춰 크기(size) 범위 안에서 데이터의 순서(index)를 조정
 	 *                               하여 데이터를 제거 한다.
 	 * </PRE>
-	 * 
+	 *
 	 * @return Object
 	 * @param index
 	 * @return
 	 */
 	public Object remove(int index) {
 		// 1. index가 배열의 범위를 벗어나는지 체크하고, 벗어나면 IndexOutOfBoundsException를 발생시킨다.
+		if(index > size){
+			throw new IllegalArgumentException("IndexOutOfBoundsException"+index);
+		}
+
 		// 2. 삭제하고자하는 데이터를 oldObj에 저장한다.
+		Object oldObj = data[index];
+
 		// 3. 삭제하고자 하는 객체가 마지막 객체가 아니라면, 배열복사를 통해 빈자리를 채워준다.
 		// 4. 마지막 데이터를 null로 한다. 배열은 0 부터 시작하므로 마지막 요소는 index가 size-1이다.
+		if(index!=size-1){
+			data[index] = null;
+			System.arraycopy(data, index+1, data, index, size-(index+1));
+			data[size-1] = null;
+		}else {
+			data[size-1] = null;
+		}
+
 		// 5. size의 값을 1 감소시킨다.
+		size--;
+
 		// 6. oldObj를 반환한다.
-		return null;	//작성시 제거후 옳바른 코드를 넣으세요.
+		return oldObj;	//작성시 제거후 옳바른 코드를 넣으세요.
 	}
 
 	/**
@@ -187,7 +219,7 @@ class MyVector {
 	 * 4. Creation Date    : 2012. 8. 30. 오전 10:43:19
 	 * 5. Comment    : 데이터를 삭제한다
 	 * </PRE>
-	 * 
+	 *
 	 * @return boolean
 	 * @param obj
 	 * @return
@@ -196,8 +228,16 @@ class MyVector {
 		boolean flag = false;
 		// 1. 반복문을 이용해서 객체배열의 모든 요소와 obj가 일치하는지 확인한다.
 		// 1.1 일치하면 remove(int index)를 호출해서 삭제하고 true를 반환한다.
+		for(int i=0; i < size; i++){
+			if(obj.equals(data[i])){
+				remove(i);
+				flag = true;
+				break;
+			}
+		}
+
 		// 1.2 일치하는 것을 찾지 못하면, false를 반환한다.
-		return false;	//작성시 제거후 옳바른 코드를 넣으세요.
+		return flag;	//작성시 제거후 옳바른 코드를 넣으세요.
 	}
 
 	/**
@@ -208,11 +248,15 @@ class MyVector {
 	 * 4. Creation Date    : 2012. 8. 30. 오전 10:53:26
 	 * 5. Comment    : Vector를 초기화한다 RETURN NOT NULL
 	 * </PRE>
-	 * 
+	 *
 	 * @return void
 	 */
 	public void clear() {
 		// 코드를 완성하세요.
+		this.data = null;
+		this.capacity = 0;
+		this.size = 0;
+
 		// return 값은 null이 아닙니다.
 	}
 
@@ -224,15 +268,19 @@ class MyVector {
 	 * 4. Creation Date     : 2012. 8. 30. 오전 11:19:04
 	 * 5. Comment    : 배열을 복사한다
 	 * </PRE>
-	 * 
+	 *
 	 * @return Object[]
 	 * @return
 	 */
 	public Object[] toArray() {
 		// 1. 객체배열 data와 같은 크기의 객체배열을 생성한다.
+		Object[] tmp = new Object[size];
+
 		// 2. 배열의 내용을 복사한다. (System.arraycopy()사용)
+		System.arraycopy(data, 0, tmp, 0, size);
+
 		// 3. 생성한 객체배열을 반환한다.
-		return null;	//작성시 제거후 옳바른 코드를 넣으세요.
+		return tmp;	//작성시 제거후 옳바른 코드를 넣으세요.
 	}
 
 	/**
@@ -243,15 +291,24 @@ class MyVector {
 	 * 4. Creation Date    : 2012. 8. 30. 오전 11:19:19
 	 * 5. Comment    : 배열객체를 String으로 변경하여 반환한다
 	 * </PRE>
-	 * 
+	 *
 	 * @return
 	 */
 	public String toString() {
 		// 1. StringBuffer를 생성한다.
+		StringBuffer sb = new StringBuffer();
+
 		// 2. 반복문과 get(int i)를 사용해서 배열의 모든 요소에 접근해서 toString()을 호출해서 sb에 저장한다.
+		for(int i=0; i < size; i++){
+
+			sb.append(get(i));
+
+		}
+
 		// 3. sb를 String으로 변환해서 반환한다.
-		return null;	//작성시 제거후 옳바른 코드를 넣으세요.
+		return sb.toString();	//작성시 제거후 옳바른 코드를 넣으세요.
 	}
+
 
 } // class MyVector
 
