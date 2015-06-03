@@ -3,7 +3,12 @@
 
 <sqlMap namespace="TestSQL">
 
+	<typeAlias alias="testVO" type="egovframework.dev.test.vo.TestVO"/>
+
 	<!-- typeAlias :: Start! -->
+	<resultMap id="TestMap"		class="testVO">
+		<result property="seq"			column="SEQ" />
+	</resultMap>
 	<!-- typeAlias :: End! -->
 
 	<!-- C -->
@@ -11,5 +16,10 @@
 	<!-- U -->
 	<!-- D -->
 	<!-- L -->
+	<select id="testDAO.selectTestList" parameterClass="testVO" resultMap="TestMap">
+		/* testDAO.selectTestList */
+		SELECT SEQ
+		FROM TB_SKY_TEST
+	</select>
 
 </sqlMap>

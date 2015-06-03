@@ -1,11 +1,17 @@
 package egovframework.dev.test.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import egovframework.dev.test.service.TestService;
+import egovframework.dev.test.vo.TestVO;
 import egovframework.framework.annotation.PageTitle;
 
 
@@ -29,23 +35,29 @@ import egovframework.framework.annotation.PageTitle;
 @Controller
 public class TestController {//주석
 
-    /** Log Info */
-    protected Log log = LogFactory.getLog(this.getClass());
+	/** Log Info */
+	protected Logger log = Logger.getLogger(this.getClass());
 
-    /**
-     * 리스트(L)
-     * @param TestVO 검색조건정보
-     * @param model 화면모델
-     * @return Test
-     * @throws Exception
-     */
-    @PageTitle("리스트(L)")
-    @RequestMapping(value="/test/list.do")
-    public String retrieveList(
-            ModelMap model
-    		)throws Exception {
+	@Resource(name = "testService")
+	private TestService testService;
 
-        return "test/list";
-    }
+	/**
+	 * 리스트(L)
+	 *
+	 * @param TestVO 검색조건정보
+	 * @param model 화면모델
+	 * @return Test
+	 * @throws Exception
+	 */
+	@PageTitle("리스트(L)")
+	@RequestMapping(value = "/test/list.do")
+	public String retrieveList(
+			@ModelAttribute("srchVO") TestVO srchVO,
+			ModelMap model) throws Exception {
+		/* Service, DAO 작성후 주석제거 */
+		//List<TestVO> list = testService.retrieveTestList(srchVO);
+		//model.addAttribute("list", list);
+		return "test/list";
+	}
 
 }
