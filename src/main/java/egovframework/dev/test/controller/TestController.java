@@ -9,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.dev.test.service.TestService;
 import egovframework.dev.test.vo.TestVO;
@@ -49,14 +52,62 @@ public class TestController {//주석
 	 * @return Test
 	 * @throws Exception
 	 */
+
+	@PageTitle("작성화면(C)")
+	@RequestMapping(value = "/test/insert.do", method=RequestMethod.GET)
+	public String insertView() throws Exception{
+		return "test/insert";
+	}
+
+	@PageTitle("작성저장(C)")
+	@RequestMapping(value = "/test/insert.do", method=RequestMethod.POST)
+	@ResponseBody
+	public String insertWriting(TestVO srchVO) throws Exception{
+
+		testService.insertTest(srchVO);
+		return "true";
+	}
+
+	@PageTitle("조회(R)")
+	@RequestMapping(value = "/test/read.do", method=RequestMethod.GET)
+	public String selectByPk(
+			@ModelAttribute("srchVO") TestVO srchVO,
+			ModelMap model) throws Exception{
+
+		TestVO vo = testService.selectTestPk(srchVO);
+		model.addAttribute("vo", vo);
+		return "test/read";
+	}
+
+	@PageTitle("수정(U)")
+	@RequestMapping(value = "/test/update.do", method=RequestMethod.POST)
+	@ResponseBody
+	public String updateWriting(
+			@ModelAttribute("srchVO") TestVO srchVO) throws Exception{
+
+		testService.updateTest(srchVO);
+		return "true";
+	}
+
+	@PageTitle("삭제(D)")
+	@RequestMapping(value = "/test/delete.do", method=RequestMethod.POST)
+	@ResponseBody
+	public String deleteByPk(
+			@ModelAttribute("srchVO") TestVO srchVO) throws Exception{
+
+		testService.deleteTest(srchVO);
+		return "true";
+	}
+
 	@PageTitle("리스트(L)")
 	@RequestMapping(value = "/test/list.do")
 	public String retrieveList(
 			@ModelAttribute("srchVO") TestVO srchVO,
 			ModelMap model) throws Exception {
-		/* Service, DAO 작성후 주석제거 */
-		//List<TestVO> list = testService.retrieveTestList(srchVO);
-		//model.addAttribute("list", list);
+
+		List<TestVO> list = testService.retrieveTestList(srchVO);
+		log.debug("vo size : "+list.size());
+		model.addAttribute("list", list);
 		return "test/list";
 	}
 

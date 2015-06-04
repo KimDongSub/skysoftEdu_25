@@ -15,9 +15,25 @@ public class TestDAO extends EgovAbstractDAO {
      * @param TestVO 검색VO
      * @return List<TestVO>
      */
+
+	public void insertTest(TestVO srchVO) {
+		insert("testDAO.insertTest", srchVO);
+	}
+
+	public TestVO selectTestPk(TestVO srchVO) {
+		return (TestVO) selectByPk("testDAO.selectTestPk", srchVO);
+	}
+
+	public void updateTest(TestVO srchVO) {
+		update("testDAO.updateTest", srchVO);
+	}
+
+	public void deleteTest(TestVO srchVO) {
+		delete("testDAO.deleteTest", srchVO);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<TestVO> selectTestList(TestVO srchVO) {
 		return list("testDAO.selectTestList", srchVO);
 	}
-
 }

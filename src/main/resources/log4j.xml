@@ -86,6 +86,7 @@
     <logger name="egovframework.dev" additivity="false">
         <level value="DEBUG"/>
         <appender-ref ref="APP-INFO-DAILY"/>
+        <appender-ref ref="console"/>
     </logger>
 
     <logger name="egovframework.framework" additivity="false">

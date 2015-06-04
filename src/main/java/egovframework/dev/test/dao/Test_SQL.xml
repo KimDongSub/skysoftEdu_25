@@ -3,23 +3,68 @@
 
 <sqlMap namespace="TestSQL">
 
-	<typeAlias alias="testVO" type="egovframework.dev.test.vo.TestVO"/>
+    <typeAlias alias="testVO" type="egovframework.dev.test.vo.TestVO"/>
 
-	<!-- typeAlias :: Start! -->
-	<resultMap id="TestMap"		class="testVO">
-		<result property="seq"			column="SEQ" />
-	</resultMap>
-	<!-- typeAlias :: End! -->
+    <!-- typeAlias :: Start! -->
+    <resultMap id="TestMap"        class="testVO">
+        <result property="seq"     column="SEQ" />
+        <result property="title"   column="TITLE" />
+        <result property="contents"   column="CONTENTS" />
+        <result property="regDtm"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
+    </resultMap>
+    <!-- typeAlias :: End! -->
+    <!-- typeAlias :: Start! -->
+    <resultMap id="TestListMap"        class="testVO">
+        <result property="seq"     column="SEQ" />
+        <result property="title"   column="TITLE" />
+        <result property="regDtm"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
+    </resultMap>
+    <!-- typeAlias :: End! -->
 
-	<!-- C -->
-	<!-- R -->
-	<!-- U -->
-	<!-- D -->
-	<!-- L -->
-	<select id="testDAO.selectTestList" parameterClass="testVO" resultMap="TestMap">
-		/* testDAO.selectTestList */
-		SELECT SEQ
-		FROM TB_SKY_TEST
-	</select>
+    <!-- C -->
+    <insert id="testDAO.insertTest" parameterClass="testVO">
+       INSERT INTO
+                   TB_SKY_TEST
+            VALUES (
+                      SEQ_SKY_TEST.NEXTVAL,
+                      #title#,
+                      #contents#,
+                      SYSDATE
+                   )
+    </insert>
+
+    <!-- R -->
+    <select id="testDAO.selectTestPk" parameterClass="testVO" resultMap="TestMap">
+        SELECT SEQ,
+               TITLE,
+               CONTENTS,
+               REG_DTM
+          FROM TB_SKY_TEST
+         WHERE SEQ=#seq#
+    </select>
+
+    <!-- U -->
+    <update id="testDAO.updateTest" parameterClass="testVO">
+        UPDATE TB_SKY_TEST
+           SET TITLE=#title#,
+               CONTENTS=#contents#,
+               REG_DTM=SYSDATE
+         WHERE SEQ=#seq#
+    </update>
+
+    <!-- D -->
+    <delete id="testDAO.deleteTest" parameterClass="testVO">
+        DELETE TB_SKY_TEST
+         WHERE SEQ=#seq#
+    </delete>
+
+    <!-- L -->
+    <select id="testDAO.selectTestList" parameterClass="testVO" resultMap="TestListMap">
+        SELECT SEQ,
+               TITLE,
+               REG_DTM
+          FROM TB_SKY_TEST
+         ORDER BY SEQ DESC
+    </select>
 
 </sqlMap>

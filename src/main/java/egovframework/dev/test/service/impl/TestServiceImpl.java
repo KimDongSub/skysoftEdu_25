@@ -27,4 +27,24 @@ public class TestServiceImpl extends AbstractServiceImpl implements TestService 
 		return testDAO.selectTestList(srchVO);
 	}
 
+	@Override
+	public void insertTest(TestVO srchVO) {
+		testDAO.insertTest(srchVO);
+	}
+
+	@Override
+	public TestVO selectTestPk(TestVO srchVO) {
+		return testDAO.selectTestPk(srchVO);
+	}
+
+	@Override
+	public void updateTest(TestVO srchVO) {
+		testDAO.updateTest(srchVO);
+	}
+
+	@Override
+	public void deleteTest(TestVO srchVO) {
+		testDAO.deleteTest(srchVO);
+	}
+
 }
