@@ -1,6 +1,9 @@
 package egovframework.dev.test.service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.validation.BindingResult;
 
 import egovframework.dev.test.vo.TestVO;
 
@@ -12,11 +15,11 @@ public interface TestService {
      * @return List<TestVO>
      */
 
-	public void insertTest(TestVO srchVO);
+	public void insertTest(TestVO srchVO,BindingResult result);
 	public TestVO selectTestPk(TestVO srchVO);
 	public void updateTest(TestVO srchVO);
 	public void deleteTest(TestVO srchVO);
-	public List<TestVO> retrieveTestList(TestVO srchVO);
-
+	public Map<String,Object> retrieveTestList(TestVO srchVO);
+	public void deleteTestList(TestVO srchVO);
 
 }

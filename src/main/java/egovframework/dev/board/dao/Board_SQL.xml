@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BoardSQL">
+
+	<typeAlias alias="boardVO" type="egovframework.dev.board.vo.BoardVO"/>
+
+	<!-- typeAlias :: Start! -->
+	<resultMap id="boardMap"		class="boardVO">
+		<result property="seq"			column="SEQ" />
+		<result property="title"		column="TITLE" />
+		<result property="regDtm"			column="REG_DTM" />
+		<result property="boardType"	column="BOARD_TYPE" />
+		<result property="ttcnt"	column="TTCNT" />
+	</resultMap>
+	<!-- typeAlias :: End! -->
+
+	<!-- typeAlias :: Start! -->
+	<resultMap id="boardReadMap"		class="boardVO">
+		<result property="seq"			column="SEQ" />
+		<result property="title"		column="TITLE" />
+		<result property="contents"		column="CONTENTS" />
+		<result property="regDtm"		column="REG_DTM" />
+		<result property="boardType"	column="BOARD_TYPE" />
+	</resultMap>
+	<!-- typeAlias :: End! -->
+
+	<!-- typeAlias :: Start! -->
+	<resultMap id="boardTypeMap"		class="boardVO">
+		<result property="seq"			column="SEQ" />
+		<result property="title"		column="TITLE" />
+		<result property="regDtm"			column="REG_DTM" />
+		<result property="boardType"	column="BOARD_TYPE" />
+		<result property="ttcnt"	column="TTCNT" />
+	</resultMap>
+	<!-- typeAlias :: End! -->
+
+	<!-- C -->
+	<insert id="boardDAO.createBoard" parameterClass="boardVO">
+       INSERT INTO TB_SKY_BOARD
+            VALUES (
+                     SEQ_SKY_BOARD.NEXTVAL,
+                     #title#,
+                     #contents#,
+                     SYSDATE,
+                     #boardType#
+                   )
+	</insert>
+
+	<!-- R -->
+	<select id="boardDAO.selectByPk" parameterClass="boardVO" resultMap="boardReadMap">
+		SELECT SEQ,
+               TITLE,
+               CONTENTS,
+               REG_DTM,
+               BOARD_TYPE
+               FROM TB_SKY_BOARD
+              WHERE SEQ = #seq#
+	</select>
+
+	<!-- U -->
+	<update id="boardDAO.updateByPk" parameterClass="boardVO">
+		UPDATE TB_SKY_BOARD
+	       SET TITLE = #title#,
+	           CONTENTS = #contents#,
+	           BOARD_TYPE = #boardType#
+	     WHERE SEQ = #seq#
+	</update>
+
+	<!-- D -->
+	<delete id="boardDAO.deleteByPk" parameterClass="boardVO">
+		DELETE TB_SKY_BOARD
+		 WHERE SEQ = #seq#
+	</delete>
+
+	<!-- L -->
+	<select id="boardDAO.selectTestList" parameterClass="boardVO" resultMap="boardMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <!-- Type L -->
+	<select id="boardDAO.selectTypeList" parameterClass="boardVO" resultMap="boardTypeMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                           WHERE BOARD_TYPE = #boardType#
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+	<!-- TC search L -->
+    <select id="boardDAO.selectTCList" parameterClass="boardVO" resultMap="boardMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                           WHERE TITLE LIKE '%'||#title#||'%' AND CONTENTS LIKE '%'||#contents#||'%'
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <select id="boardDAO.selectTList" parameterClass="boardVO" resultMap="boardMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                           WHERE TITLE LIKE '%'||#title#||'%'
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <select id="boardDAO.selectCList" parameterClass="boardVO" resultMap="boardMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                           WHERE TITLE LIKE '%'||#contents#
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <!-- TC&Type search L -->
+    <select id="boardDAO.selectTCTypeList" parameterClass="boardVO" resultMap="boardMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                           WHERE TITLE LIKE '%'||#title#||'%' AND CONTENTS LIKE '%'||#contents#||'%'
+                             AND BOARD_TYPE=#boardType#
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <select id="boardDAO.selectTTypeList" parameterClass="boardVO" resultMap="boardMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                           WHERE TITLE LIKE '%'||#title#||'%'
+                             AND BOARD_TYPE=#boardType#
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <select id="boardDAO.selectCTypeList" parameterClass="boardVO" resultMap="boardMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               BOARD_TYPE,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM,
+                                 BOARD_TYPE
+                            FROM TB_SKY_BOARD
+                           WHERE TITLE LIKE '%'||#contents#
+                             AND BOARD_TYPE=#boardType#
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+</sqlMap>

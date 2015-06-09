@@ -4,4 +4,5 @@
 
 <sqlMapConfig>
 	<sqlMap resource="egovframework/dev/test/dao/Test_SQL.xml"/>
+	<sqlMap resource="egovframework/dev/board/dao/Board_SQL.xml"/>
 </sqlMapConfig>

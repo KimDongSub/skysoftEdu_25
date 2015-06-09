@@ -1,24 +1,19 @@
-package egovframework.dev.test.vo;
+package egovframework.dev.board.vo;
 
 import java.util.Date;
 
-import org.springframework.web.multipart.MultipartFile;
-
-public class TestVO {
+public class BoardVO {
 
 	private int seq;
-	private int[] seqList;
 	private String title;
 	private String contents;
 	private Date regDtm;
+	private String boardType;
 	private int pageNo=1;
 	private int firstIndex;
 	private int lastIndex;
 	private int ttcnt;
-	private MultipartFile file;
-	private String fileName;
-	private String fileSaveName;
-
+	private int[] seqArray;
 
 	public int getSeq() {
 		return seq;
@@ -44,12 +39,20 @@ public class TestVO {
 		this.contents = contents;
 	}
 
-	public java.util.Date getRegDtm() {
+	public Date getRegDtm() {
 		return regDtm;
 	}
 
-	public void setRegDtm(java.util.Date regDtm) {
+	public void setRegDtm(Date regDtm) {
 		this.regDtm = regDtm;
+	}
+
+	public String getBoardType() {
+		return boardType;
+	}
+
+	public void setBoardType(String boardType) {
+		this.boardType = boardType;
 	}
 
 	public int getPageNo() {
@@ -84,37 +87,12 @@ public class TestVO {
 		this.ttcnt = ttcnt;
 	}
 
-	public int[] getSeqList() {
-		return seqList;
+	public int[] getSeqArray() {
+		return seqArray;
 	}
 
-	public void setSeqList(int[] seqList) {
-		this.seqList = seqList;
+	public void setSeqArray(int[] seqArray) {
+		this.seqArray = seqArray;
 	}
-
-	public MultipartFile getFile() {
-		return file;
-	}
-
-	public void setFile(MultipartFile file) {
-		this.file = file;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public String getFileSaveName() {
-		return fileSaveName;
-	}
-
-	public void setFileSaveName(String fileSaveName) {
-		this.fileSaveName = fileSaveName;
-	}
-
 
 }

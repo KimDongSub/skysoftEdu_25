@@ -13,11 +13,40 @@
         <result property="regDtm"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
     </resultMap>
     <!-- typeAlias :: End! -->
+
     <!-- typeAlias :: Start! -->
     <resultMap id="TestListMap"        class="testVO">
         <result property="seq"     column="SEQ" />
         <result property="title"   column="TITLE" />
         <result property="regDtm"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
+          <result property="ttcnt"   column="TTCNT" />
+    </resultMap>
+    <!-- typeAlias :: End! -->
+
+     <!-- typeAlias :: Start! -->
+    <resultMap id="selectTCMap"        class="testVO">
+        <result property="seq"     column="SEQ" />
+        <result property="title"   column="TITLE" />
+        <result property="regDtm"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
+        <result property="ttcnt"   column="TTCNT" />
+    </resultMap>
+    <!-- typeAlias :: End! -->
+
+    <!-- typeAlias :: Start! -->
+    <resultMap id="selectTMap"        class="testVO">
+        <result property="seq"     column="SEQ" />
+        <result property="title"   column="TITLE" />
+        <result property="regDtm"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
+        <result property="ttcnt"   column="TTCNT" />
+    </resultMap>
+    <!-- typeAlias :: End! -->
+
+    <!-- typeAlias :: Start! -->
+    <resultMap id="selectCMap"        class="testVO">
+        <result property="seq"     column="SEQ" />
+        <result property="title"   column="TITLE" />
+        <result property="regDtm"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
+        <result property="ttcnt"   column="TTCNT" />
     </resultMap>
     <!-- typeAlias :: End! -->
 
@@ -60,11 +89,110 @@
 
     <!-- L -->
     <select id="testDAO.selectTestList" parameterClass="testVO" resultMap="TestListMap">
+    <![CDATA[
         SELECT SEQ,
                TITLE,
-               REG_DTM
-          FROM TB_SKY_TEST
-         ORDER BY SEQ DESC
+               REG_DTM,
+               RN,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM
+                            FROM TB_SKY_TEST
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <!-- TCsearchL -->
+    <select id="testDAO.selectTCList" parameterClass="testVO" resultMap="selectTCMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM
+                            FROM TB_SKY_TEST
+                           WHERE TITLE LIKE '%'||#title#||'%' AND CONTENTS LIKE '%'||#contents#||'%'
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+	<!-- TsearchL -->
+    <select id="testDAO.selectTList" parameterClass="testVO" resultMap="selectTMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM
+                            FROM TB_SKY_TEST
+                           WHERE TITLE LIKE '%'||#title#||'%'
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
+    </select>
+
+    <!-- CsearchL -->
+    <select id="testDAO.selectCList" parameterClass="testVO" resultMap="selectCMap">
+    <![CDATA[
+        SELECT SEQ,
+               TITLE,
+               REG_DTM,
+               TTCNT
+          FROM (
+                 SELECT T1.*,
+                        COUNT(*) OVER() TTCNT,
+                        ROWNUM AS RN
+                   FROM (
+                          SELECT SEQ,
+                                 TITLE,
+                                 REG_DTM
+                            FROM TB_SKY_TEST
+                           WHERE CONTENTS LIKE #contents#||'%'
+                        ORDER BY REG_DTM
+                            DESC
+                        )T1
+               )
+          WHERE RN
+        BETWEEN #firstIndex#
+            AND #lastIndex#
+    ]]>
     </select>
 
 </sqlMap>

@@ -36,4 +36,22 @@ public class TestDAO extends EgovAbstractDAO {
 	public List<TestVO> selectTestList(TestVO srchVO) {
 		return list("testDAO.selectTestList", srchVO);
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<TestVO> selectTCList(TestVO srchVO) {
+		return list("testDAO.selectTCList", srchVO);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<TestVO> selectTList(TestVO srchVO) {
+		return list("testDAO.selectTList", srchVO);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<TestVO> selectCList(TestVO srchVO) {
+		return list("testDAO.selectCList", srchVO);
+	}
+
+
+
 }

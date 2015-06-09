@@ -1,21 +1,23 @@
 package egovframework.dev.test.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.dev.test.service.TestService;
 import egovframework.dev.test.vo.TestVO;
 import egovframework.framework.annotation.PageTitle;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 
 /**-----------------------------------------------------------------------
@@ -56,16 +58,17 @@ public class TestController {//주석
 	@PageTitle("작성화면(C)")
 	@RequestMapping(value = "/test/insert.do", method=RequestMethod.GET)
 	public String insertView() throws Exception{
-		return "test/insert";
+		return "test/insertForm";
 	}
 
 	@PageTitle("작성저장(C)")
 	@RequestMapping(value = "/test/insert.do", method=RequestMethod.POST)
-	@ResponseBody
-	public String insertWriting(TestVO srchVO) throws Exception{
+	public String insertWriting(
+			@ModelAttribute("srchVO") TestVO srchVO,
+			BindingResult result) throws Exception{
 
-		testService.insertTest(srchVO);
-		return "true";
+		testService.insertTest(srchVO,result);
+		return "redirect:/test/list.do";
 	}
 
 	@PageTitle("조회(R)")
@@ -76,27 +79,34 @@ public class TestController {//주석
 
 		TestVO vo = testService.selectTestPk(srchVO);
 		model.addAttribute("vo", vo);
-		return "test/read";
+		return "test/readForm";
 	}
 
 	@PageTitle("수정(U)")
 	@RequestMapping(value = "/test/update.do", method=RequestMethod.POST)
-	@ResponseBody
 	public String updateWriting(
 			@ModelAttribute("srchVO") TestVO srchVO) throws Exception{
 
 		testService.updateTest(srchVO);
-		return "true";
+		return "redirect:/test/list.do";
 	}
 
 	@PageTitle("삭제(D)")
 	@RequestMapping(value = "/test/delete.do", method=RequestMethod.POST)
-	@ResponseBody
 	public String deleteByPk(
 			@ModelAttribute("srchVO") TestVO srchVO) throws Exception{
 
 		testService.deleteTest(srchVO);
-		return "true";
+		return "redirect:/test/list.do";
+	}
+
+	@PageTitle("리스트삭제(D)")
+	@RequestMapping(value = "/test/deleteList.do", method=RequestMethod.POST)
+	public String deleteList(
+			@ModelAttribute("srchVO") TestVO srchVO) throws Exception{
+
+		testService.deleteTestList(srchVO);
+		return "redirect:/test/list.do";
 	}
 
 	@PageTitle("리스트(L)")
@@ -105,9 +115,10 @@ public class TestController {//주석
 			@ModelAttribute("srchVO") TestVO srchVO,
 			ModelMap model) throws Exception {
 
-		List<TestVO> list = testService.retrieveTestList(srchVO);
-		log.debug("vo size : "+list.size());
-		model.addAttribute("list", list);
+		Map<String,Object> map = testService.retrieveTestList(srchVO);
+		model.addAttribute("srchVO", srchVO);
+		model.addAttribute("list", map.get("list"));
+		model.addAttribute("paginationInfo", map.get("paginationInfo"));
 		return "test/list";
 	}
 
