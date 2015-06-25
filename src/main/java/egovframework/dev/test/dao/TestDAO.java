@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import egovframework.dev.test.vo.NaverVO;
 import egovframework.dev.test.vo.TestVO;
 import egovframework.rte.psl.dataaccess.EgovAbstractDAO;
 
@@ -16,12 +17,20 @@ public class TestDAO extends EgovAbstractDAO {
      * @return List<TestVO>
      */
 
-	public void insertTest(TestVO srchVO) {
-		insert("testDAO.insertTest", srchVO);
+	public int insertTest(TestVO srchVO) {
+		return (Integer) insert("testDAO.insertTest", srchVO);
+	}
+
+	public void insertTestFile(TestVO srchVO) {
+		 insert("testDAO.insertTestFile", srchVO);
 	}
 
 	public TestVO selectTestPk(TestVO srchVO) {
 		return (TestVO) selectByPk("testDAO.selectTestPk", srchVO);
+	}
+
+	public TestVO selectTestDn(TestVO srchVO) {
+		return (TestVO) selectByPk("testDAO.selectTestDn", srchVO);
 	}
 
 	public void updateTest(TestVO srchVO) {
@@ -30,6 +39,10 @@ public class TestDAO extends EgovAbstractDAO {
 
 	public void deleteTest(TestVO srchVO) {
 		delete("testDAO.deleteTest", srchVO);
+	}
+
+	public void deleteTestFile(TestVO srchVO) {
+		delete("testDAO.deleteTestFile", srchVO);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -52,6 +65,32 @@ public class TestDAO extends EgovAbstractDAO {
 		return list("testDAO.selectCList", srchVO);
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<TestVO> selectDList(TestVO srchVO) {
+		return list("testDAO.selectDList", srchVO);
+	}
 
+	@SuppressWarnings("unchecked")
+	public List<TestVO> selectTDList(TestVO srchVO) {
+		return list("testDAO.selectTDList", srchVO);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<TestVO> selectExList(TestVO srchVO) {
+		return list("testDAO.selectAllList", srchVO);
+	}
+
+	public void setNaverAPI(NaverVO vo) {
+		insert("testDAO.setNaverAPI", vo);
+	}
+
+	public NaverVO selectByNaver(NaverVO vo) {
+		return (NaverVO)selectByPk("testDAO.selectByNaver", vo);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<NaverVO> checkTitle(NaverVO vo) {
+		return list("testDAO.checkTitle", vo);
+	}
 
 }

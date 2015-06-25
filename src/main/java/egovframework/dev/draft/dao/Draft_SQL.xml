@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="DraftSQL">
+	<!-- typeAlias :: Start! -->
+	<typeAlias alias="draftVO" type="egovframework.dev.draft.vo.DraftVO"/>
+	<!-- typeAlias :: End! -->
+
+
+<!-- 기안 조회맵 draftMap -->
+    <resultMap id="draftMap"        class="draftVO">
+        <result property="seq"            column="SEQ" />
+        <result property="userSeq"            column="USER_SEQ" />
+        <result property="draftTypeCd"        column="DRAFT_TYPE_CD" />
+        <result property="emerPhone"        column="EMER_PHONE" />
+        <result property="reason"        column="REASON" />
+        <result property="etc"        column="ETC" />
+        <result property="halfCd"        column="HALF_CD" />
+        <result property="docNm"        column="DOC_NM" />
+        <result property="startDt"        column="START_DT" />
+        <result property="endDt"        column="END_DT" />
+        <result property="regDtm"        column="REG_DTM" />
+        <result property="drafterNm"        column="DRAFTER_NM" />
+        <result property="reviewerNm"        column="REVIEWER_NM" />
+        <result property="approvalNm"        column="APPROVAL_NM" />
+        <result property="stateCd"        column="STATE_CD" />
+        <result property="stepCd"        column="STEP_CD" />
+    </resultMap>
+
+
+<!-- 기안 리스트맵 draftListMap -->
+    <resultMap id="draftListMap"        class="draftVO">
+        <result property="seq"            column="SEQ" />
+        <result property="draftTypeNm"        column="DRAFT_TYPE_NM" />
+        <result property="regDtm"        column="REG_DTM" />
+        <result property="drafterNm"        column="DRAFTER_NM" />
+        <result property="stateNm"        column="STATE_NM" />
+        <result property="stepNm"        column="STEP_NM" />
+        <result property="halfTime"        column="HALF_TYPE" />
+        <result property="startDt"        column="START_DT" />
+        <result property="endDt"        column="END_DT" />
+        <result property="draftTypeCd"        column="DRAFT_TYPE_CD" />
+        <result property="title"        column="TITLE" />
+    </resultMap>
+
+
+<!-- 기안유저맵 draftUserMap-->
+    <resultMap id="draftUserMap"        class="draftVO">
+        <result property="seq"            column="SEQ" />
+        <result property="userNm"            column="USER_NM" />
+        <result property="groupCd"        column="GROUP_CD" />
+        <result property="rankCd"        column="RANK_CD" />
+        <result property="groupNm"        column="GROUP_NM" />
+        <result property="rankNm"        column="RANK_NM" />
+    </resultMap>
+
+
+<!-- 기안 유저관리자정보맵 draftBaseInfoMap-->
+    <resultMap id="draftBaseInfoMap"        class="draftVO">
+        <result property="mngNm"        	column="MNG_NM" />
+        <result property="rankCd"        	column="RANK_CD" />
+        <result property="mngGroupNm"       column="MNG_GROUP_NM" />
+        <result property="mngRankNm"        column="MNG_RANK_NM" />
+        <result property="mngTypeNm"        column="MNG_TYPE_NM" />
+        <result property="mngTypeCd"        column="MNG_TYPE_CD" />
+    </resultMap>
+
+
+<!-- 기안 조회맵 draftReadMap-->
+    <resultMap id="draftReadMap"        class="draftVO">
+        <result property="seq"        	column="SEQ" />
+        <result property="userSeq"        	column="USER_SEQ" />
+        <result property="draftTypeCd"       column="DRAFT_TYPE_CD" />
+        <result property="draftTypeNm"        column="DRAFT_TYPE_NM" />
+        <result property="emerPhone"        column="EMER_PHONE" />
+        <result property="reason"        column="REASON" />
+         <result property="etc"        column="ETC" />
+         <result property="halfCd"        column="HALF_CD" />
+         <result property="halfNm"        column="HALF_NM" />
+         <result property="docNm"        column="DOC_NM" />
+         <result property="startDt"        column="START_DT" />
+         <result property="endDt"        column="END_DT" />
+         <result property="regDtm"        column="REG_DTM" />
+         <result property="drafterNm"        column="DRAFTER_NM" />
+         <result property="reviewerNm"        column="REVIEWER_NM" />
+         <result property="approvalNm"        column="APPROVAL_NM" />
+         <result property="realFileNm"        column="REAL_FILE_NM" />
+         <result property="reviewerCm"        column="REVIEWER_CM" />
+         <result property="approvalCm"        column="APPROVAL_CM" />
+         <result property="recoveryYn"        column="RECOVERY_YN" />
+    </resultMap>
+
+
+<!-- 기안 유저값  draftDAO.selectUserInfo-->
+<select id="draftDAO.selectUserInfo" parameterClass="draftVO" resultMap="draftUserMap">
+	SELECT
+           SEQ,
+           (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='GRP01' AND GROUP_CD=CD) AS GROUP_NM,
+           GROUP_CD,
+           RANK_CD,
+           USER_NM,
+           (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='RAN01' AND RANK_CD=CD) AS RANK_NM
+      FROM TB_USER
+	 WHERE SEQ=#userSeq#
+</select>
+
+
+<!-- 기안 유저관리자정보 값 draftDAO.selectBaseInfo-->
+<select id="draftDAO.selectBaseInfo" parameterClass="draftVO" resultMap="draftBaseInfoMap">
+	     SELECT
+               A.USER_NM AS MNG_NM,
+               A.RANK_CD,
+               (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='GRP01' AND A.GROUP_CD=CD) AS MNG_GROUP_NM,
+               (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='RAN01' AND A.RANK_CD=CD) AS MNG_RANK_NM,
+               (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='REQ01' AND B.MNG_TYPE_CD =CD) AS MNG_TYPE_NM,
+               B.MNG_TYPE_CD
+          FROM TB_USER A, TB_MANAGER B
+         WHERE B.USER_SEQ = #userSeq#
+           AND A.SEQ = B.MNG_SEQ
+         ORDER BY A.RANK_CD DESC
+</select>
+
+<!-- 기안 저장 draftDAO.draftInsert-->
+<insert id="draftDAO.draftInsert" parameterClass="draftVO">
+	<selectKey keyProperty="seq" resultClass="Integer">
+        SELECT SEQ_TB_DRAFT.NEXTVAL AS SEQ FROM DUAL
+	</selectKey>
+        INSERT INTO TB_DRAFT
+             VALUES (
+               	       #seq#,
+		               #userSeq#,
+		               #draftTypeCd#,
+		               #emerPhone#,
+		               #reason#,
+		               #etc#,
+		               #halfCd#,
+		               #docNm#,
+		               #startDt#,
+		               #endDt#,
+		               SYSDATE,
+		               #drafterNm#,
+		               #reviewerNm#,
+		               #approvalNm#,
+		               '00000001',
+		               '00000001',
+		               #reviewerCm#,
+		               #approvalCm#,
+		               #title#,
+		               'N'
+                    )
+</insert>
+
+<!-- 기안첨부파일저장 draftDAO.draftFileInsert -->
+<insert id="draftDAO.draftFileInsert" parameterClass="draftVO">
+	INSERT INTO TB_FILE
+         VALUES (
+                   #seq#,
+				   #useYn#,
+				   #saveFileNm#,
+				   #realFileNm#,
+				   SYSDATE
+                )
+</insert>
+
+
+<!-- 기안 조회 draftDAO.selectByPk-->
+<select id="draftDAO.selectByPk" parameterClass="draftVO" resultMap="draftReadMap">
+	 SELECT A.SEQ,
+            A.USER_SEQ,
+            A.DRAFT_TYPE_CD,
+            (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='DRA01' AND A.DRAFT_TYPE_CD=CD) AS DRAFT_TYPE_NM,
+            A.EMER_PHONE,
+            A.REASON,
+            A.ETC,
+            A.HALF_CD,
+            (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='HAL01' AND A.HALF_CD=CD) AS HALF_NM,
+            A.DOC_NM,
+            A.START_DT,
+            A.END_DT,
+            A.REG_DTM,
+            A.REVIEWER_CM,
+            A.APPROVAL_CM,
+            A.DRAFTER_NM,
+            A.REVIEWER_NM,
+            A.APPROVAL_NM,
+            B.REAL_FILE_NM,
+            A.RECOVERY_YN
+       FROM TB_DRAFT A, TB_FILE B
+      WHERE A.SEQ=B.DRAFT_SEQ
+        AND A.SEQ=#seq#
+</select>
+<!-- 기안 조회 end-->
+
+<!-- 기안리스트정보및 검색 draftDAO.selectDraftList -->
+<select id="draftDAO.selectDraftList" parameterClass="draftVO" resultMap="draftListMap">
+	SELECT SEQ,
+		   DRAFTER_NM,
+		   REG_DTM,
+		   START_DT,
+		   END_DT,
+		   DRAFT_TYPE_NM,
+		   STEP_NM,
+		   STATE_NM,
+		   HALF_TYPE,
+		   DRAFT_TYPE_CD,
+		   TITLE
+	   FROM
+			(SELECT ROWNUM AS RN, T1.*
+			  FROM
+				(SELECT
+						A.SEQ AS SEQ,
+				        A.DRAFTER_NM,
+				        A.REG_DTM,
+				        A.START_DT,
+			            A.END_DT,
+				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='DRA01' AND A.DRAFT_TYPE_CD=CD)AS DRAFT_TYPE_NM,
+				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='STE01' AND A.STEP_CD=CD)AS STEP_NM,
+				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='STA01' AND STATE_CD=CD)AS STATE_NM,
+				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='HAL01' AND HALF_CD=CD)AS HALF_TYPE,
+				       A.DRAFT_TYPE_CD,
+				       A.TITLE
+				 FROM TB_DRAFT A, TB_USER B
+				WHERE B.SEQ=#userSeq#
+				<isNotEmpty property="draftTypeCd">AND A.DRAFT_TYPE_CD=#draftTypeCd#</isNotEmpty>
+				<isNotEmpty property="stateCd">AND A.STATE_CD=#stateCd#</isNotEmpty>
+				<isNotEmpty property="stepCd">AND A.STEP_CD=#stepCd#</isNotEmpty>
+				<isNotEmpty property="title">AND A.TITLE LIKE '%'||#title#||'%'</isNotEmpty>
+				ORDER BY A.SEQ DESC
+				)T1)
+	    WHERE RN BETWEEN #firstIndex# AND #lastRecordIndex#
+</select>
+
+<!-- 기안회수 draftDAO.draftRecovery-->
+<update id="draftDAO.draftRecovery" parameterClass="draftVO">
+ 	UPDATE TB_DRAFT
+ 	  SET RECOVERY_YN='Y'
+ 	WHERE SEQ=#seq#
+</update>
+
+<!-- 기안수정 draftDAO.draftRevice-->
+<update id="draftDAO.draftRevice" parameterClass="draftVO">
+ 	UPDATE TB_DRAFT
+ 	  SET RECOVERY_YN='N',
+ 	  	  START_DT=#startDt#,
+ 	  	  END_DT=#endDt#,
+ 	  	  REASON=#reason#,
+ 	  	  ETC=#etc#,
+ 	  	  EMER_PHONE=#emerPhone#,
+ 	  	  HALF_CD=#halfCd#,
+ 	  	  DOC_NM=#docNm#,
+ 	  	  REG_DTM=SYSDATE,
+ 	  	  TITLE=#title#
+ 	WHERE SEQ=#seq#
+</update>
+
+<!-- 기안파일수정 draftDAO.draftFileUpdate-->
+<update id="draftDAO.draftFileUpdate" parameterClass="draftVO">
+ 	UPDATE TB_FILE
+ 	  SET SAVE_FILE_NM=#saveFileNm#,
+ 	  	  REAL_FILE_NM=#realFileNm#
+ 	WHERE DRAFT_SEQ=#seq#
+</update>
+
+<!-- 기안 총 갯수값 draftDAO.draftCount -->
+<select id="draftDAO.draftCount" parameterClass="draftVO" resultClass="Integer">
+     SELECT DISTINCT COUNT(*) OVER() AS TTCNT
+       FROM TB_DRAFT A,TB_USER B
+      WHERE B.SEQ=#userSeq#
+      <isNotEmpty property="draftTypeCd">AND A.DRAFT_TYPE_CD=#draftTypeCd#</isNotEmpty>
+      <isNotEmpty property="stateCd">AND A.STATE_CD=#stateCd#</isNotEmpty>
+      <isNotEmpty property="stepCd">AND A.STEP_CD=#stepCd#</isNotEmpty>
+      <isNotEmpty property="title">AND A.TITLE LIKE '%'||#title#||'%'</isNotEmpty>
+</select>
+
+</sqlMap>

@@ -7,10 +7,15 @@ import org.springframework.web.multipart.MultipartFile;
 public class TestVO {
 
 	private int seq;
+	private int orgSeq;
+	private int fileSeq;
 	private int[] seqList;
 	private String title;
 	private String contents;
+	private String useYN;
+	private String path;
 	private Date regDtm;
+	private Date regDtm2;
 	private int pageNo=1;
 	private int firstIndex;
 	private int lastIndex;
@@ -18,6 +23,7 @@ public class TestVO {
 	private MultipartFile file;
 	private String fileName;
 	private String fileSaveName;
+	private String fileChName;
 
 
 	public int getSeq() {
@@ -114,6 +120,54 @@ public class TestVO {
 
 	public void setFileSaveName(String fileSaveName) {
 		this.fileSaveName = fileSaveName;
+	}
+
+	public String getFileChName() {
+		return fileChName;
+	}
+
+	public void setFileChName(String fileChName) {
+		this.fileChName = fileChName;
+	}
+
+	public int getFileSeq() {
+		return fileSeq;
+	}
+
+	public void setFileSeq(int fileSeq) {
+		this.fileSeq = fileSeq;
+	}
+
+	public String getUseYN() {
+		return useYN;
+	}
+
+	public void setUseYN(String useYN) {
+		this.useYN = useYN;
+	}
+
+	public int getOrgSeq() {
+		return orgSeq;
+	}
+
+	public void setOrgSeq(int orgSeq) {
+		this.orgSeq = orgSeq;
+	}
+
+	public Date getRegDtm2() {
+		return regDtm2;
+	}
+
+	public void setRegDtm2(Date regDtm2) {
+		this.regDtm2 = regDtm2;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 

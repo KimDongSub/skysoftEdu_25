@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui" %>
@@ -7,6 +7,9 @@
 #searchbox{
 	margin-left : 265px;
 	margin-bottom: 10px;
+}
+a {
+	text-decoration: none;
 }
 </style>
 
@@ -99,6 +102,26 @@ function search() {
 	}
 }
 
+function exNumList(){
+	tableForm.action="/test/exNumList.do";
+	tableForm.submit();
+}
+
+function exAllNumList(){
+	tableForm.action="/test/exAllList.do";
+	tableForm.submit();
+}
+
+function popup(){
+	var popUrl = "/test/pop.do";	//팝업창에 출력될 페이지 URL
+	var popOption = "width=370, height=360, resizable=no, scrollbars=no, status=no;";    //팝업창 옵션(optoin)
+		window.open(popUrl,"",popOption);
+
+	window.name="parats";
+}
+function naverDirectory(){
+	location.href="/test/naverSearchView.do";
+}
 </script>
 
 <form id="tableForm" name="tableForm" action="" method="post">
@@ -124,6 +147,7 @@ function search() {
 		<th scope="col"><input type="checkbox" id="allck" name="allck"  onclick="allCk(this.checked);">전체</th>
 		<th scope="col">번호</th>
 		<th scope="col">제목</th>
+		<th scope="col">대표파일</th>
 		<th scope="col">등록일</th>
 	</tr>
 	</thead>
@@ -134,7 +158,16 @@ function search() {
 		<tr>
 			<td><input type="checkbox" name="seqList" value="${vo.seq}" onclick="check(this.checked)"></td>
 			<td>${vo.seq}</td>
-			<td><a href="/test/read.do?seq=${vo.seq}">${vo.title}</a></td>
+			<td><a href="/test/read.do?seq=${vo.seq}&orgSeq=${vo.seq}">${vo.title}</a></td>
+
+			<td>
+			<c:forEach var="vo2" items="${requestScope.list2}">
+			<c:if test="${vo2.orgSeq == vo.seq && vo2.useYN == 'yes' }">
+			<a href="javascript:down()">${vo2.fileSaveName}</a>
+			</c:if>
+			</c:forEach>
+			</td>
+
 			<td><fmt:formatDate value="${vo.regDtm}" pattern="yyyy-MM-dd" /></td>
 		</tr>
 	</c:forEach>
@@ -148,16 +181,18 @@ function search() {
 </form>
 
 <!-- 페이징 처리 -->
-<div class="paging">
 	<c:choose>
-	<c:when test="${paginationInfo!=null}">
-		<ui:pagination paginationInfo = "${paginationInfo}" type="text" jsFunction="linkPage"/>
+	<c:when test="${pageUtil!=null}">
+		${pageUtil.navi}
 	</c:when>
 	</c:choose>
-</div>
  <!-- 페이징 처리 -->
 
 <div class="btn">
 	<input type="button" value="등록" onclick="javascript:document.location.href='/test/insert.do'">
 	<input type="button" value="삭제" onclick="javascript:checkDelete()">
+	<input type="button" value="엑셀다운로드" onclick="javascript:exNumList()">
+	<input type="button" value="엑셀전체다운로드" onclick="javascript:exAllNumList()">
+	<input type="button" value="엑셀업로드" onclick="javascript:popup()">
+	<input type="button" value="네이버백과사전" onclick="javascript:naverDirectory()">
 </div>

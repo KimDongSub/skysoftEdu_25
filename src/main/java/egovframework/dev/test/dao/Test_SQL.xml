@@ -4,6 +4,7 @@
 <sqlMap namespace="TestSQL">
 
     <typeAlias alias="testVO" type="egovframework.dev.test.vo.TestVO"/>
+    <typeAlias alias="naverVO" type="egovframework.dev.test.vo.NaverVO"/>
 
     <!-- typeAlias :: Start! -->
     <resultMap id="TestMap"        class="testVO">
@@ -50,17 +51,95 @@
     </resultMap>
     <!-- typeAlias :: End! -->
 
+    <!-- typeAlias :: Down! -->
+    <resultMap id="TestMapDown"        class="testVO">
+        <result property="orgSeq"     column="ORG_SEQ" />
+        <result property="fileSeq"   column="FILE_SEQ" />
+        <result property="useYN"   column="USE_YN" />
+        <result property="fileSaveName"   column="SAVE_FILE_NM" />
+        <result property="fileName"   column="REAL_FILE_NM" />
+        <result property="regDtm2"   column="REG_DTM" javaType="date" jdbcType="DATE"/>
+    </resultMap>
+
+	<!-- typeAlias :: Start! -->
+    <resultMap id="naverMap"        class="naverVO">
+        <result property="title"     column="TITLE" />
+        <result property="link"   column="LINK" />
+        <result property="description"   column="DESCRIPTION" />
+        <result property="thumbnail"   column="THUMBNAIL"/>
+    </resultMap>
+    <!-- typeAlias :: End! -->
+
+    <!-- typeAlias :: Start! -->
+    <resultMap id="naverCheckMap"        class="naverVO">
+        <result property="title"     column="TITLE" />
+    </resultMap>
+    <!-- typeAlias :: End! -->
+
+
     <!-- C -->
     <insert id="testDAO.insertTest" parameterClass="testVO">
+
+	<selectKey keyProperty="seq" resultClass="Integer">
+       SELECT SEQ_SKY_TEST.NEXTVAL AS ID FROM DUAL
+   	  </selectKey>
+
        INSERT INTO
                    TB_SKY_TEST
             VALUES (
-                      SEQ_SKY_TEST.NEXTVAL,
+                      #seq#,
                       #title#,
                       #contents#,
                       SYSDATE
                    )
+
     </insert>
+
+    <!-- Cfile -->
+    <insert id="testDAO.insertTestFile" parameterClass="testVO">
+
+       INSERT INTO
+                   TB_SKY_TEST_FILE
+            VALUES (
+                      #seq#,
+                      SEQ_SKY_TEST_FILE.NEXTVAL,
+                      #useYN#,
+                      #fileName#,
+                      #fileSaveName#,
+                      SYSDATE
+                   )
+    </insert>
+
+    <!-- Dfile -->
+    <select id="testDAO.selectTestDn" parameterClass="testVO" resultMap="TestMapDown">
+        SELECT ORG_SEQ,
+               FILE_SEQ,
+               USE_YN,
+               SAVE_FILE_NM,
+               REAL_FILE_NM,
+               REG_DTM
+          FROM TB_SKY_TEST_FILE
+         WHERE ORG_SEQ=#orgSeq#
+    </select>
+
+    <!-- Dserch -->
+    <select id="testDAO.selectTDList" parameterClass="testVO" resultMap="TestMapDown">
+        SELECT ORG_SEQ,
+               FILE_SEQ,
+               USE_YN,
+               SAVE_FILE_NM,
+               REAL_FILE_NM,
+               REG_DTM
+          FROM TB_SKY_TEST_FILE
+    </select>
+	<!-- 엑셀전체다운 -->
+	<select id="testDAO.selectAllList" parameterClass="testVO" resultMap="TestMap">
+        SELECT SEQ,
+               TITLE,
+               CONTENTS,
+               REG_DTM
+          FROM TB_SKY_TEST
+    </select>
 
     <!-- R -->
     <select id="testDAO.selectTestPk" parameterClass="testVO" resultMap="TestMap">
@@ -86,6 +165,12 @@
         DELETE TB_SKY_TEST
          WHERE SEQ=#seq#
     </delete>
+
+    <update id="testDAO.deleteTestFile" parameterClass="testVO">
+        UPDATE TB_SKY_TEST_FILE
+           SET USE_YN=#useYN#
+         WHERE ORG_SEQ=#seq#
+    </update>
 
     <!-- L -->
     <select id="testDAO.selectTestList" parameterClass="testVO" resultMap="TestListMap">
@@ -193,6 +278,33 @@
         BETWEEN #firstIndex#
             AND #lastIndex#
     ]]>
+    </select>
+
+	<!-- naverResultSave -->
+    <insert id="testDAO.setNaverAPI" parameterClass="naverVO">
+       INSERT INTO TB_SKY_TEST_API
+       VALUES (
+                #title#,
+                #link#,
+                #description#,
+                #thumbnail#
+              )
+    </insert>
+
+    <!-- SelectNaverResult -->
+    <select id="testDAO.selectByNaver" parameterClass="naverVO" resultMap="naverMap">
+        SELECT TITLE,
+               LINK,
+               DESCRIPTION,
+               THUMBNAIL
+          FROM TB_SKY_TEST_API
+         WHERE TITLE LIKE '%'||#title#||'%'
+    </select>
+
+     <!-- CheckNaverResult -->
+    <select id="testDAO.checkTitle" parameterClass="naverVO" resultMap="naverCheckMap">
+        SELECT TITLE
+          FROM TB_SKY_TEST_API
     </select>
 
 </sqlMap>

@@ -46,9 +46,22 @@ function deleteByPk(){
 	form1.submit();
 
 }
+
+function deleteByFile(){
+
+	form1.action = "/test/deleteFile.do";
+	form1.submit();
+
+}
+
+function down(){
+	form1.action = "/test/down.do";
+	form1.submit();
+}
 </script>
 
-<form id="form1" name="form1" action="/test/update.do" method="post">
+<form id="form1" name="form1" action="/test/update.do" method="post" enctype="multipart/form-data">
+<input type="hidden" name="filename" value="${requestScope.vo2.fileName}">
 <table border="1" class="search_list">
 <colgroup>
 	<col width="15%" />
@@ -65,6 +78,21 @@ function deleteByPk(){
 		<th>내용</th>
 		<td>
 			<textarea id="contents" name="contents" rows="10" cols="30">${requestScope.vo.contents}</textarea>
+		</td>
+	</tr>
+	<tr>
+		<th>첨부파일</th>
+		<td>
+			<c:choose>
+			<c:when test="${requestScope.vo2.useYN=='yes'}">
+			<%-- <a href="C:/Users/Skysoft_D001/Desktop/saveFile/${requestScope.vo2.fileName}" download="${requestScope.vo2.fileSaveName}">${requestScope.vo2.fileSaveName}</a> --%>
+			<a href="javascript:down()">${requestScope.vo2.fileSaveName}</a>
+			<input type="button" value="파일삭제" onclick="javascript:deleteByFile()">
+			</c:when>
+			<c:otherwise>
+				<input type="file" id="file" name="file">
+			</c:otherwise>
+			</c:choose>
 		</td>
 	</tr>
 	<tr>

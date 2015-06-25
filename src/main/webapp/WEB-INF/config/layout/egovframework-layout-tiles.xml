@@ -5,13 +5,24 @@
 <tiles-definitions>
 
 	<!-- ::::::::SYSTEM:::::::: 테스트 - type : Layout -->
-	<definition name="board.nothing" template="/WEB-INF/jsp/layout/nothing_layout.jsp">
+	<definition name="test.nothing" template="/WEB-INF/jsp/layout/nothing_layout.jsp">
 		<put-attribute name="content" value=""/>
 	</definition>
 
 	<!-- ::::::::SYSTEM:::::::: 테스트 - type : Mapping -->
-	<definition name="board/*" extends="board.nothing">
-		<put-attribute name="content" value="/WEB-INF/jsp/board/{1}.jsp"/>
+	<definition name="test/*" extends="test.nothing">
+		<put-attribute name="content" value="/WEB-INF/jsp/test/{1}.jsp"/>
 	</definition>
+
+		<!-- ::::::::SYSTEM:::::::: 기안 - type : Layout -->
+	<definition name="draft.nothing" template="/WEB-INF/jsp/layout/nothing_layout.jsp">
+		<put-attribute name="content" value=""/>
+	</definition>
+
+	<!-- ::::::::SYSTEM:::::::: 기안- type : Mapping -->
+	<definition name="draft/*" extends="draft.nothing">
+		<put-attribute name="content" value="/WEB-INF/jsp/draft/{1}.jsp"/>
+	</definition>
+
 
 </tiles-definitions>
