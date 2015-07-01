@@ -17,7 +17,7 @@ public interface DraftService {
 
 		public DraftVO selectUserInfo(DraftVO srchVO);
 
-		public void draftInsert(DraftVO srchVO) throws Exception;
+		public void draftWrite(DraftVO srchVO) throws Exception;
 
 		public DraftVO selectByPk(DraftVO srchVO);
 
@@ -30,5 +30,18 @@ public interface DraftService {
 		public void draftFileUpdate(DraftVO srchVO) throws Exception;
 
 		public int draftCount(DraftVO srchVO);
+
+		public List<DraftVO> selectSubordinateByPk(DraftVO srchVO);
+
+		public int selectDraftUserSeq(DraftVO srchVO);
+
+		public boolean reviewerCheck(DraftVO srchVO);
+
+		public void updateReviewerState(DraftVO srchVO);
+
+		public boolean approvalCheck(DraftVO srchVO);
+
+		public void updateApprovalState(DraftVO srchVO);
+
 
 }

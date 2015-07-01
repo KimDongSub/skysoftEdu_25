@@ -3,7 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%>
 
-
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript">
 function linkPage(pageNo){
@@ -12,18 +11,14 @@ function linkPage(pageNo){
 		cPageNo=1;
 	}
 	$('#cPageNo').val(cPageNo);
-	$('#searchForm').attr('action', '/draft/draftList.do');
+	$('#searchForm').attr('action', '/draft/mngDraftView.do');
+	$('#searchForm').attr('method', 'post');
 	$('#searchForm').submit();
 }
-function goInsert(){
-	location.href = "/draft/draftWriteView.do";
-}
 function draftRead(seq){
-
-	location.href = "/draft/draftRead.do?seq="+seq;
+	location.href = "/draft/mngDraftRead.do?seq="+seq;
 }
 function reset(){
-
 	$('select').each(function(){
 		$(this).find('option:first').attr('selected','true');
 	});
@@ -31,15 +26,16 @@ function reset(){
 }
 
 function draftSearch(){
-	$('#searchForm').attr('action', '/draft/draftList.do');
+	$('#searchForm').attr('action', '/draft/mngDraftView.do');
+	$('#searchForm').attr('method', 'post');
 	$('#searchForm').submit();
 }
-function reviewer(){
+function selectDraft(){
+	$('#searchForm').attr('action', '/draft/mngDraftView.do');
+	$('#searchForm').attr('method','post');
+	$('#searchForm').submit();
+}
 
-}
-function approval(){
-	location.href="/draft/mngDraftView.do";
-}
 </script>
 
 <form id="searchForm" name="searchForm" action="" method="get">
@@ -95,14 +91,21 @@ function approval(){
 </select>
 <input type="button" value="보기" onClick="javascript:linkPage()">
 </div>
+<select id="userSeq" name="userSeq" onchange="javascript:selectDraft()">
+	<option value="0">선택하세요.</option>
+	<c:if test="${not empty subInfoList}">
+		<c:forEach var="vo" items="${subInfoList}">
+			<option value="${vo.subInfoSeq}" <c:if test="${vo.subInfoSeq==srchVO.userSeq}">selected</c:if>>${vo.userNm}</option>
+		</c:forEach>
+	</c:if>
+</select>
 </form>
 
 <input type="button" id="reset" name="reset" value="초기화" onClick="javascript:reset()">
 <input type="button" id="notPass" name="notPass" value="미처리기안" onClick="javascript:draftSearch()">
 <input type="button" id="draftSearch" name="draftSearch" value="검색" onClick="javascript:draftSearch()">
 
-
-<form action="/test/search.do" id="input_form" name="input_form" method="get">
+<form action="/test/search.do" id="input_form" name="input_form" method="post" enctype="multipart/form-data">
 <input type="hidden" id="cPageNo" name="cPageNo" value="${srchVO.cPageNo}">
 <table border="1" summary="이 표는 번호, 제목, 등록일 항목에 대한 정보를 제공합니다. 제목클릭시 상세페이지로 이동합니다." class="owl-">
 <caption>테스트과제 목록</caption>
@@ -146,13 +149,10 @@ function approval(){
 		</tr>
 	</c:forEach>
 	</c:when>
-
-
 	<c:otherwise>
 		<tr><td colspan="3">검색된 결과가 없습니다</td></tr>
 	</c:otherwise>
 	</c:choose>
-
 </tbody>
 </table>
 </form>
@@ -165,6 +165,5 @@ function approval(){
 </div>
 
 <div class="btn">
-	<input type="button" value="신규작성" onclick="goInsert();" style="margin-left:520px;">
-	<input type="button" value="검토/결재함" onclick="approval();">
+
 </div>

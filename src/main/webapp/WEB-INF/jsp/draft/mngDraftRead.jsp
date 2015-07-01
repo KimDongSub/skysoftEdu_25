@@ -37,14 +37,70 @@ $('document').ready(function(){
 
 });
 
-function recoveryCheck(){
-	if(!confirm('정말 회수하시겠습니까?')){
+function reviewView(){
+
+	$.ajax({
+		url : "/draft/reviewerCheck.do",
+		type : "post",
+		dataType : "text",
+		success : function(data) {
+			if(data=="true"){
+				$('#reviewerCm').removeAttr('disabled');
+				$('#reviewerBtn').attr("value","저장");
+				$('#reviewerBtn').attr("onClick","javascript:reviewSave()");
+			}else{
+				alert("해당 담당자가 아닙니다.");
+				return;
+			}
+		},
+		error : function(request) {
+			alert("실패");
+		}
+	});
+}
+function reviewSave(){
+	if(!confirm("정말 저장하시겠습니까?")){
 		return;
 	}
-	$('#form1').attr('action', '/draft/draftRecovery.do');
+	$('#form1').attr('action','/draft/reviewerSave.do');
 	$('#form1').submit();
 }
+function approvalView(){
 
+	$.ajax({
+		url : "/draft/approvalCheck.do",
+		type : "post",
+		dataType : "text",
+		success : function(data) {
+			if(data=="true"){
+				$('#approvalCm').removeAttr('disabled');
+				$('#approvalBtn').attr("value","저장");
+				$('#approvalBtn').attr("onClick","javascript:approvalSave()");
+			}else{
+				alert("해당 담당자가 아닙니다.");
+				return;
+			}
+		},
+		error : function(request) {
+			alert("실패");
+		}
+	});
+
+}
+function approvalSave(){
+	if(!confirm("정말 저장하시겠습니까?")){
+		return;
+	}
+	var stepCd = $('#stateCd').val();
+	if($.trim(stepCd)=='' || $.trim(stepCd)==null){
+		alert("결재유형을 선택해주세요.");
+		return;
+	}
+
+	$('#form1').attr('action','/draft/approvalSave.do');
+	$('#form1').submit();
+
+}
 </script>
 
 
@@ -83,8 +139,8 @@ function recoveryCheck(){
 </tr>
 </table>
 <!-- end -->
-
 <c:if test="${not empty srchVO.draftTypeCd}">
+
 
 <table border="1" class="owl-" style="margin-top:10px;">
 <tr style="width:50px; height:50px;">
@@ -224,20 +280,30 @@ function recoveryCheck(){
 	</td>
 </tr>
 </table>
-</form>
-
 <table border="1" class="owl-" style="margin-top:10px; width:640px;">
 <tr>
 	<th style="width:25%;">검토의견</th>
-	<td>${srchVO.reviewerCm}</td>
+	<td><textarea cols="10" rows="3" id="reviewerCm" name="reviewerCm" disabled="disabled" style="resize:none; width:250px;">${srchVO.reviewerCm}</textarea></td>
+	<td colspan="2"><input type="button" id="reviewerBtn" name="reviewerBtn" value="검토하기" onClick="javascript:reviewView()"></td>
 </tr>
+
 <tr>
 	<th style="width:25%;">결재의견</th>
-	<td>${srchVO.approvalCm}</td>
+	<td><textarea cols="10" rows="3" id="approvalCm" name="approvalCm" disabled="disabled" style="resize:none; width:250px;">${srchVO.approvalCm}</textarea></td>
+	<td>
+		<select id="stateCd" name="stateCd">
+			<option value="" selected>선택</option>
+			<option value="00000002">승인</option>
+			<option value="00000003">보류</option>
+			<option value="00000004">반려</option>
+		</select>
+	</td>
+	<td><input type="button" id="approvalBtn" name="approvalBtn" value="결재하기" onClick="javascript:approvalView()"></td>
 </tr>
 </table>
+</form>
+
 <div class="btn">
-<input type="button" value="회수" onClick="javascript:recoveryCheck()">
-<input type="button" value="목록" onClick="javascript:document.location.href='/draft/draftList.do'">
+<input type="button" value="목록" onClick="javascript:document.location.href='/draft/mngDraftView.do'">
 </div>
 </c:if>

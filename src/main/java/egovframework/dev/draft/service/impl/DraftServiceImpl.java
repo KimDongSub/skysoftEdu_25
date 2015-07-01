@@ -56,16 +56,17 @@ import egovframework.rte.fdl.cmmn.AbstractServiceImpl;
 		}
 
 		@Override
-		public void draftInsert(DraftVO srchVO) throws Exception {
+		public void draftWrite(DraftVO srchVO) throws Exception {
+			log.debug("서비스임플리안");
 
 			srchVO.setUseYn("N");
 			if(srchVO.getFile().getSize()>0){
 				srchVO = fileWrite(srchVO);
 			}
 
-			int seq = draftDAO.draftInsert(srchVO);
+			int seq = draftDAO.draftWrite(srchVO);
 			srchVO.setSeq(seq);
-			draftDAO.draftFileInsert(srchVO);
+			draftDAO.draftFileWrite(srchVO);
 		}
 
 
@@ -137,6 +138,46 @@ import egovframework.rte.fdl.cmmn.AbstractServiceImpl;
 		@Override
 		public int draftCount(DraftVO srchVO) {
 			return draftDAO.draftCount(srchVO);
+		}
+
+		@Override
+		public List<DraftVO> selectSubordinateByPk(DraftVO srchVO) {
+			return draftDAO.selectSubordinateByPK(srchVO);
+		}
+
+		@Override
+		public int selectDraftUserSeq(DraftVO srchVO) {
+			return draftDAO.selectDraftUserSeq(srchVO);
+		}
+
+		@Override
+		public boolean reviewerCheck(DraftVO srchVO) {
+			int mngSeq = draftDAO.selectReviewerInfo(srchVO);
+			if(mngSeq==Integer.parseInt(srchVO.getMngSeq())){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		@Override
+		public void updateReviewerState(DraftVO srchVO) {
+			draftDAO.updateReviewerState(srchVO);
+		}
+
+		@Override
+		public boolean approvalCheck(DraftVO srchVO) {
+			int mngSeq = draftDAO.selectApprovalInfo(srchVO);
+			if(mngSeq==Integer.parseInt(srchVO.getMngSeq())){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		@Override
+		public void updateApprovalState(DraftVO srchVO) {
+			draftDAO.updateApprovalState(srchVO);
 		}
 
 }

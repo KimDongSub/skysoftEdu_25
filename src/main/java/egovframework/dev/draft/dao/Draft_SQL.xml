@@ -6,31 +6,10 @@
 	<typeAlias alias="draftVO" type="egovframework.dev.draft.vo.DraftVO"/>
 	<!-- typeAlias :: End! -->
 
-
-<!-- 기안 조회맵 draftMap -->
-    <resultMap id="draftMap"        class="draftVO">
-        <result property="seq"            column="SEQ" />
-        <result property="userSeq"            column="USER_SEQ" />
-        <result property="draftTypeCd"        column="DRAFT_TYPE_CD" />
-        <result property="emerPhone"        column="EMER_PHONE" />
-        <result property="reason"        column="REASON" />
-        <result property="etc"        column="ETC" />
-        <result property="halfCd"        column="HALF_CD" />
-        <result property="docNm"        column="DOC_NM" />
-        <result property="startDt"        column="START_DT" />
-        <result property="endDt"        column="END_DT" />
-        <result property="regDtm"        column="REG_DTM" />
-        <result property="drafterNm"        column="DRAFTER_NM" />
-        <result property="reviewerNm"        column="REVIEWER_NM" />
-        <result property="approvalNm"        column="APPROVAL_NM" />
-        <result property="stateCd"        column="STATE_CD" />
-        <result property="stepCd"        column="STEP_CD" />
-    </resultMap>
-
-
 <!-- 기안 리스트맵 draftListMap -->
     <resultMap id="draftListMap"        class="draftVO">
         <result property="seq"            column="SEQ" />
+        <result property="userSeq"            column="USER_SEQ" />
         <result property="draftTypeNm"        column="DRAFT_TYPE_NM" />
         <result property="regDtm"        column="REG_DTM" />
         <result property="drafterNm"        column="DRAFTER_NM" />
@@ -88,6 +67,14 @@
          <result property="reviewerCm"        column="REVIEWER_CM" />
          <result property="approvalCm"        column="APPROVAL_CM" />
          <result property="recoveryYn"        column="RECOVERY_YN" />
+         <result property="reviewerDtm"        column="REVIEWER_DTM" />
+         <result property="approvalDtm"        column="APPROVAL_DTM" />
+    </resultMap>
+
+<!-- 직속 하급자 정보맵 subordinateInfoMap-->
+    <resultMap id="subordinateInfoMap"        class="draftVO">
+        <result property="subInfoSeq"        	column="SEQ" />
+        <result property="userNm"        	column="USER_NM" />
     </resultMap>
 
 
@@ -121,7 +108,7 @@
 </select>
 
 <!-- 기안 저장 draftDAO.draftInsert-->
-<insert id="draftDAO.draftInsert" parameterClass="draftVO">
+<insert id="draftDAO.draftWrite" parameterClass="draftVO">
 	<selectKey keyProperty="seq" resultClass="Integer">
         SELECT SEQ_TB_DRAFT.NEXTVAL AS SEQ FROM DUAL
 	</selectKey>
@@ -146,12 +133,15 @@
 		               #reviewerCm#,
 		               #approvalCm#,
 		               #title#,
-		               'N'
+		               'N',
+		               '',
+		               '',
+		               ''
                     )
 </insert>
 
 <!-- 기안첨부파일저장 draftDAO.draftFileInsert -->
-<insert id="draftDAO.draftFileInsert" parameterClass="draftVO">
+<insert id="draftDAO.draftFileWrite" parameterClass="draftVO">
 	INSERT INTO TB_FILE
          VALUES (
                    #seq#,
@@ -184,7 +174,9 @@
             A.REVIEWER_NM,
             A.APPROVAL_NM,
             B.REAL_FILE_NM,
-            A.RECOVERY_YN
+            A.RECOVERY_YN,
+            A.REVIEWER_DTM,
+            A.APPROVAL_DTM
        FROM TB_DRAFT A, TB_FILE B
       WHERE A.SEQ=B.DRAFT_SEQ
         AND A.SEQ=#seq#
@@ -194,6 +186,7 @@
 <!-- 기안리스트정보및 검색 draftDAO.selectDraftList -->
 <select id="draftDAO.selectDraftList" parameterClass="draftVO" resultMap="draftListMap">
 	SELECT SEQ,
+	       USER_SEQ,
 		   DRAFTER_NM,
 		   REG_DTM,
 		   START_DT,
@@ -203,29 +196,37 @@
 		   STATE_NM,
 		   HALF_TYPE,
 		   DRAFT_TYPE_CD,
-		   TITLE
+		   TITLE,
+		   RECOVERY_YN,
+		   STATE_CD,
+		   STEP_CD
 	   FROM
 			(SELECT ROWNUM AS RN, T1.*
 			  FROM
 				(SELECT
-						A.SEQ AS SEQ,
-				        A.DRAFTER_NM,
-				        A.REG_DTM,
-				        A.START_DT,
-			            A.END_DT,
-				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='DRA01' AND A.DRAFT_TYPE_CD=CD)AS DRAFT_TYPE_NM,
-				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='STE01' AND A.STEP_CD=CD)AS STEP_NM,
+						SEQ,
+						USER_SEQ,
+				        DRAFTER_NM,
+				        REG_DTM,
+				        START_DT,
+			            END_DT,
+				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='DRA01' AND DRAFT_TYPE_CD=CD)AS DRAFT_TYPE_NM,
+				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='STE01' AND STEP_CD=CD)AS STEP_NM,
 				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='STA01' AND STATE_CD=CD)AS STATE_NM,
 				       (SELECT CD_NM FROM TB_COMMON_CD WHERE CD_TYPE='HAL01' AND HALF_CD=CD)AS HALF_TYPE,
-				       A.DRAFT_TYPE_CD,
-				       A.TITLE
-				 FROM TB_DRAFT A, TB_USER B
-				WHERE B.SEQ=#userSeq#
-				<isNotEmpty property="draftTypeCd">AND A.DRAFT_TYPE_CD=#draftTypeCd#</isNotEmpty>
-				<isNotEmpty property="stateCd">AND A.STATE_CD=#stateCd#</isNotEmpty>
-				<isNotEmpty property="stepCd">AND A.STEP_CD=#stepCd#</isNotEmpty>
-				<isNotEmpty property="title">AND A.TITLE LIKE '%'||#title#||'%'</isNotEmpty>
-				ORDER BY A.SEQ DESC
+				       DRAFT_TYPE_CD,
+				       TITLE,
+				       RECOVERY_YN,
+				       STATE_CD,
+				       STEP_CD
+				 FROM TB_DRAFT
+				WHERE USER_SEQ=#userSeq#
+				<isNotEmpty property="mngSeq">AND RECOVERY_YN='N'</isNotEmpty>
+				<isNotEmpty property="draftTypeCd">AND DRAFT_TYPE_CD=#draftTypeCd#</isNotEmpty>
+				<isNotEmpty property="stateCd">AND STATE_CD=#stateCd#</isNotEmpty>
+				<isNotEmpty property="stepCd">AND STEP_CD=#stepCd#</isNotEmpty>
+				<isNotEmpty property="title">AND TITLE LIKE '%'||#title#||'%'</isNotEmpty>
+				ORDER BY SEQ DESC
 				)T1)
 	    WHERE RN BETWEEN #firstIndex# AND #lastRecordIndex#
 </select>
@@ -248,7 +249,7 @@
  	  	  EMER_PHONE=#emerPhone#,
  	  	  HALF_CD=#halfCd#,
  	  	  DOC_NM=#docNm#,
- 	  	  REG_DTM=SYSDATE,
+ 	  	  MODIFY_DTM=SYSDATE,
  	  	  TITLE=#title#
  	WHERE SEQ=#seq#
 </update>
@@ -263,13 +264,69 @@
 
 <!-- 기안 총 갯수값 draftDAO.draftCount -->
 <select id="draftDAO.draftCount" parameterClass="draftVO" resultClass="Integer">
-     SELECT DISTINCT COUNT(*) OVER() AS TTCNT
-       FROM TB_DRAFT A,TB_USER B
-      WHERE B.SEQ=#userSeq#
-      <isNotEmpty property="draftTypeCd">AND A.DRAFT_TYPE_CD=#draftTypeCd#</isNotEmpty>
-      <isNotEmpty property="stateCd">AND A.STATE_CD=#stateCd#</isNotEmpty>
-      <isNotEmpty property="stepCd">AND A.STEP_CD=#stepCd#</isNotEmpty>
-      <isNotEmpty property="title">AND A.TITLE LIKE '%'||#title#||'%'</isNotEmpty>
+     SELECT COUNT(*) AS TTCNT
+       FROM TB_DRAFT
+      WHERE USER_SEQ=#userSeq#
+      <isNotEmpty property="draftTypeCd">AND DRAFT_TYPE_CD=#draftTypeCd#</isNotEmpty>
+      <isNotEmpty property="stateCd">AND STATE_CD=#stateCd#</isNotEmpty>
+      <isNotEmpty property="stepCd">AND STEP_CD=#stepCd#</isNotEmpty>
+      <isNotEmpty property="title">AND TITLE LIKE '%'||#title#||'%'</isNotEmpty>
 </select>
+
+<!-- 직속 하급자 정보값 draftDAO.selectSubordinateByPK-->
+<select id="draftDAO.selectSubordinateByPK" parameterClass="draftVO" resultMap="subordinateInfoMap">
+     SELECT
+   DISTINCT A.SEQ,
+     		A.USER_NM
+       FROM TB_USER A, TB_MANAGER B
+      WHERE A.SEQ = B.USER_SEQ
+        AND B.MNG_SEQ = #mngSeq#
+</select>
+
+<!-- 기안서의 기안자 사원번호 값  -->
+<select id="draftDAO.selectDraftUserSeq" parameterClass="draftVO" resultClass="Integer">
+     SELECT
+            USER_SEQ
+       FROM TB_DRAFT
+      WHERE SEQ=#seq#
+</select>
+
+<!-- 기안서의 검토자 확인을 위한 값  draftDAO.selectReviewerInfo-->
+<select id="draftDAO.selectReviewerInfo" parameterClass="draftVO" resultClass="Integer">
+     SELECT B.MNG_SEQ
+       FROM TB_USER A, TB_MANAGER B
+      WHERE A.SEQ = B.USER_SEQ
+        AND B.MNG_TYPE_CD='00000001'
+        AND A.SEQ=#userSeq#
+</select>
+
+<!-- 기안서의 검토 저장  draftDAO.updateReviewerState-->
+<update id="draftDAO.updateReviewerState" parameterClass="draftVO">
+     UPDATE TB_DRAFT
+        SET REVIEWER_CM=#reviewerCm#,
+            STEP_CD='00000002',
+            REVIEWER_NM=#reviewerNm#,
+            REVIEWER_DTM=SYSDATE
+      WHERE SEQ=#seq#
+</update>
+
+<!-- 기안서의 결재자 확인을 위한 값  draftDAO.selectApprovalInfo-->
+<select id="draftDAO.selectApprovalInfo" parameterClass="draftVO" resultClass="Integer">
+     SELECT B.MNG_SEQ
+       FROM TB_USER A, TB_MANAGER B
+      WHERE A.SEQ = B.USER_SEQ
+        AND B.MNG_TYPE_CD='00000002'
+        AND A.SEQ=#userSeq#
+</select>
+
+<!-- 기안서의 결재 저장  draftDAO.updateApprovalState-->
+<update id="draftDAO.updateApprovalState" parameterClass="draftVO">
+     UPDATE TB_DRAFT
+        SET APPROVAL_CM=#approvalCm#,
+            STATE_CD=#stateCd#,
+            APPROVAL_NM=#approvalNm#,
+            APPROVAL_DTM=SYSDATE
+      WHERE SEQ=#seq#
+</update>
 
 </sqlMap>

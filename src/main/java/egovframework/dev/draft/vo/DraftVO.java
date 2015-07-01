@@ -15,6 +15,7 @@ public class DraftVO {
 	private int recordCountPerPage=5;
 	//기안자
 	private int userSeq;
+	private int subSeq;
 	private String draftTypeCd;
 	private String draftTypeNm;
 	private String groupCd;
@@ -49,6 +50,10 @@ public class DraftVO {
 	private String reviewerCm;
 	private String approvalCm;
 	private String pageState;
+	private String mngSeq;
+	private int subInfoSeq;
+	private Date reviewerDtm;
+	private Date approvalDtm;
 
 	private MultipartFile file;
 	private String useYn;
@@ -337,6 +342,37 @@ public class DraftVO {
 	}
 	public void setRecoveryYn(String recoveryYn) {
 		this.recoveryYn = recoveryYn;
+	}
+	public int getSubSeq() {
+		return subSeq;
+	}
+	public void setSubSeq(int subSeq) {
+		this.subSeq = subSeq;
+	}
+
+	public String getMngSeq() {
+		return mngSeq;
+	}
+	public void setMngSeq(String mngSeq) {
+		this.mngSeq = mngSeq;
+	}
+	public int getSubInfoSeq() {
+		return subInfoSeq;
+	}
+	public void setSubInfoSeq(int subInfoSeq) {
+		this.subInfoSeq = subInfoSeq;
+	}
+	public Date getReviewerDtm() {
+		return reviewerDtm;
+	}
+	public void setReviewerDtm(Date reviewerDtm) {
+		this.reviewerDtm = reviewerDtm;
+	}
+	public Date getApprovalDtm() {
+		return approvalDtm;
+	}
+	public void setApprovalDtm(Date approvalDtm) {
+		this.approvalDtm = approvalDtm;
 	}
 
 }

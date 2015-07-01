@@ -30,12 +30,12 @@ import egovframework.rte.psl.dataaccess.EgovAbstractDAO;
 			return (DraftVO)selectByPk("draftDAO.selectUserInfo", srchVO);
 		}
 
-		public int draftInsert(DraftVO srchVO) {
-			return (Integer) insert("draftDAO.draftInsert", srchVO);
+		public int draftWrite(DraftVO srchVO) {
+			return (Integer) insert("draftDAO.draftWrite", srchVO);
 		}
 
-		public void draftFileInsert(DraftVO srchVO) {
-			insert("draftDAO.draftFileInsert", srchVO);
+		public void draftFileWrite(DraftVO srchVO) {
+			insert("draftDAO.draftFileWrite", srchVO);
 		}
 
 		public DraftVO selectByPk(DraftVO srchVO) {
@@ -55,7 +55,36 @@ import egovframework.rte.psl.dataaccess.EgovAbstractDAO;
 		}
 
 		public int draftCount(DraftVO srchVO) {
-			return (Integer)selectByPk("draftDAO.draftCount", srchVO);
+			if(selectByPk("draftDAO.draftCount", srchVO)==null){
+				return 0;
+			}else {
+				return (Integer)selectByPk("draftDAO.draftCount", srchVO);
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		public List<DraftVO> selectSubordinateByPK(DraftVO srchVO) {
+			return list("draftDAO.selectSubordinateByPK", srchVO);
+		}
+
+		public int selectDraftUserSeq(DraftVO srchVO) {
+			return (Integer)selectByPk("draftDAO.selectDraftUserSeq", srchVO);
+		}
+
+		public int selectReviewerInfo(DraftVO srchVO) {
+			return (Integer)selectByPk("draftDAO.selectReviewerInfo", srchVO);
+		}
+
+		public void updateReviewerState(DraftVO srchVO) {
+			update("draftDAO.updateReviewerState",srchVO);
+		}
+
+		public int selectApprovalInfo(DraftVO srchVO) {
+			return (Integer)selectByPk("draftDAO.selectApprovalInfo", srchVO);
+		}
+
+		public void updateApprovalState(DraftVO srchVO) {
+			update("draftDAO.updateApprovalState",srchVO);
 		}
 
 }
